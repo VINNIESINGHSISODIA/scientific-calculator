@@ -1,6 +1,6 @@
 import math
 import logging
-print("WEBHOOK TRIGGER CHECK!!!")
+print("WEBHOOK TRIGGER CHECK!!!!")
 # ── Logging setup ──────────────────────────────────────────────────────────────
 # Logs are written to calculator.log (used later by ELK stack for monitoring)
 logging.basicConfig(
