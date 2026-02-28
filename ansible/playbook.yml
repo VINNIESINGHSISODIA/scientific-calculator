@@ -1,0 +1,44 @@
+---
+- name: Deploy Scientific Calculator
+  hosts: localhost
+  connection: local
+  become: false
+
+  vars:
+    docker_image: "vinnie9999/scientific-calculator"
+    docker_tag: "latest"
+    container_name: "scientific-calculator"
+
+  tasks:
+
+    - name: Pull latest Docker image from Docker Hub
+      command: docker pull {{ docker_image }}:{{ docker_tag }}
+      register: pull_result
+
+    - name: Show pull result
+      debug:
+        msg: "{{ pull_result.stdout }}"
+
+    - name: Stop existing container if running
+      command: docker stop {{ container_name }}
+      ignore_errors: true
+
+    - name: Remove existing container if it exists
+      command: docker rm {{ container_name }}
+      ignore_errors: true
+
+    - name: Run the scientific calculator container
+      command: docker run -d --name {{ container_name }} {{ docker_image }}:{{ docker_tag }}
+      register: run_result
+
+    - name: Show container ID
+      debug:
+        msg: "Container started with ID: {{ run_result.stdout }}"
+
+    - name: Verify container is running
+      command: docker ps --filter name={{ container_name }}
+      register: container_status
+
+    - name: Show container status
+      debug:
+        msg: "{{ container_status.stdout }}"
