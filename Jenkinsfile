@@ -46,6 +46,13 @@ pipeline {
                 }
             }
         }
+        // ── Stage 5: Deploy with Ansible ──────────────────────────────────────────
+        stage('Deploy with Ansible') {
+            steps {
+                echo 'Deploying with Ansible...'
+                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/playbook.yml'
+            }
+        }
 
     }
 
