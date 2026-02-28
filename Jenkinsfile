@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "vinnie9999/scientific-calculator"
         DOCKER_TAG = "latest"
+        EMAIL_RECIPIENT = "vinniesinghsisodia@gmail.com"
     }
 
     stages {
@@ -56,13 +57,57 @@ pipeline {
 
     }
 
-    post {
+     post {
         success {
-            echo 'Pipeline completed successfully! Image pushed to Docker Hub.'
+            echo 'Pipeline completed successfully!'
+            emailext(
+                to: "${EMAIL_RECIPIENT}",
+                subject: "BUILD SUCCESS - Scientific Calculator #${BUILD_NUMBER}",
+                body: """
+                    <html>
+                    <body>
+                        <h2 style="color:green;">Build Successful!</h2>
+                        <p><b>Project:</b> Scientific Calculator</p>
+                        <p><b>Build Number:</b> #${BUILD_NUMBER}</p>
+                        <p><b>Status:</b> SUCCESS</p>
+                        <p><b>Docker Image:</b> vinnie9999/scientific-calculator:latest</p>
+                        <p><b>All Stages Passed:</b></p>
+                        <ul>
+                            <li>Checkout</li>
+                            <li>Unit Tests (19 tests passed)</li>
+                            <li>Docker Image Built</li>
+                            <li>Pushed to Docker Hub</li>
+                            <li>Deployed with Ansible</li>
+                        </ul>
+                        <p>Check details at: <a href="${BUILD_URL}">${BUILD_URL}</a></p>
+                    </body>
+                    </html>
+                """,
+                mimeType: 'text/html'
+            )
         }
+
         failure {
-            echo 'Pipeline failed! Check the logs above for errors.'
+            echo 'Pipeline failed!'
+            emailext(
+                to: "${EMAIL_RECIPIENT}",
+                subject: "BUILD FAILED - Scientific Calculator #${BUILD_NUMBER}",
+                body: """
+                    <html>
+                    <body>
+                        <h2 style="color:red;">Build Failed!</h2>
+                        <p><b>Project:</b> Scientific Calculator</p>
+                        <p><b>Build Number:</b> #${BUILD_NUMBER}</p>
+                        <p><b>Status:</b> FAILED</p>
+                        <p>Please check the console output for errors:</p>
+                        <p><a href="${BUILD_URL}console">${BUILD_URL}console</a></p>
+                    </body>
+                    </html>
+                """,
+                mimeType: 'text/html'
+            )
         }
+
         always {
             bat "docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG} || exit 0"
         }
