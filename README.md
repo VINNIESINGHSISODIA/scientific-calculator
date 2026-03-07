@@ -1,277 +1,220 @@
-# 🧮 Scientific Calculator with DevOps Pipeline
+#  Scientific Calculator — DevOps CI/CD Pipeline
 
-> A command-line Scientific Calculator built with Python, delivered through a complete DevOps pipeline including CI/CD, containerization, and automated deployment.
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker)
+![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-D24939?logo=jenkins)
+![Ansible](https://img.shields.io/badge/Ansible-Deployment-EE0000?logo=ansible)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+A command-line Scientific Calculator application built with Python, deployed through a fully automated DevOps CI/CD pipeline using **GitHub → Jenkins → Docker → Docker Hub → Ansible**.
 
 ---
 
-## 📋 Table of Contents
-- [About the Application](#about-the-application)
-- [Calculator Operations](#calculator-operations)
-- [DevOps Pipeline](#devops-pipeline)
+##  Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
+- [Pipeline Architecture](#pipeline-architecture)
 - [Getting Started](#getting-started)
 - [Running Tests](#running-tests)
-- [Docker](#docker)
-- [Jenkins Pipeline](#jenkins-pipeline)
-- [Ansible Deployment](#ansible-deployment)
+- [Docker Usage](#docker-usage)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [Links](#links)
 
 ---
 
-## 📌 About the Application
+## Overview
 
-A menu-driven command-line calculator built in Python supporting four mathematical operations. Every operation is logged to `calculator.log` for monitoring purposes.
-
-**Built with:** Python 3.12  
-**Course:** CS 816 - Software Production Engineering  
+This project demonstrates a complete DevOps workflow for a Python-based Scientific Calculator. Every code push to GitHub automatically triggers a Jenkins pipeline that runs unit tests, builds a Docker image, pushes it to Docker Hub, and deploys the container using Ansible — all without any manual intervention.
 
 ---
 
-## 🔢 Calculator Operations
+## Features
 
-| Operation | Symbol | Example | Result |
-|-----------|--------|---------|--------|
-| Square Root | √x | √25 | 5.0 |
-| Factorial | x! | 5! | 120 |
-| Natural Logarithm | ln(x) | ln(10) | 2.302 |
-| Power | x^b | 2^8 | 256.0 |
+The calculator supports the following mathematical operations:
 
----
+| Operation | Symbol | Input Constraint |
+|---|---|---|
+| Square Root | √x | x ≥ 0 |
+| Factorial | x! | x must be a non-negative integer |
+| Natural Logarithm | ln(x) | x > 0 |
+| Power | x^b | No restriction |
 
-## ⚙️ DevOps Pipeline
-
-Every push to GitHub automatically triggers the full pipeline:
-
-```
-Push to GitHub
-      ↓
-GitHub Webhook → ngrok → Jenkins
-      ↓
-✅ Pull latest code
-✅ Run 19 unit tests (PyUnit)
-✅ Build Docker image
-✅ Push to Docker Hub
-✅ Deploy with Ansible
-✅ Send email notification
-```
-
-### Tools Used
-
-| Stage | Tool | Alternative |
-|-------|------|-------------|
-| Source Control | GitHub | GitLab, BitBucket |
-| Testing | PyUnit | pytest, JUnit |
-| CI/CD | Jenkins | GitHub Actions, GitLab CI |
-| Containerization | Docker | Podman |
-| Image Registry | Docker Hub | Amazon ECR, GitHub Registry |
-| Deployment | Ansible | Chef, Puppet, Rundeck |
-| Tunnel | ngrok | Cloudflare Tunnel |
-| Notifications | Gmail SMTP | Slack, SendGrid |
+- Menu-driven command-line interface
+- Input validation with descriptive error messages
+- Operation logging to `calculator.log` (timestamp, operation, inputs, result)
 
 ---
 
-## 📁 Project Structure
+## Tech Stack
+
+| Tool | Role |
+|---|---|
+| **Python 3.12** | Application development |
+| **PyUnit (unittest)** | Automated unit testing (19 test cases) |
+| **GitHub** | Source control & webhook triggers |
+| **Jenkins** | CI/CD pipeline orchestration |
+| **Docker** | Containerization |
+| **Docker Hub** | Container image registry |
+| **Ansible** | Automated deployment |
+| **ngrok** | Exposes local Jenkins to GitHub webhooks |
+| **Gmail SMTP** | Pipeline email notifications |
+
+---
+
+## Project Structure
 
 ```
 scientific-calculator/
-├── calculator.py          # Main application with 4 operations
-├── test_calculator.py     # 19 unit tests covering all functions
-├── Dockerfile             # Container build instructions
-├── Jenkinsfile            # CI/CD pipeline definition
+├── calculator.py           # Main application
+├── test_calculator.py      # Unit tests (19 test cases)
+├── Dockerfile              # Container build instructions
+├── Jenkinsfile             # CI/CD pipeline definition
 └── ansible/
-    ├── inventory.ini      # Target machines (localhost)
-    └── playbook.yml       # Deployment instructions
+    ├── inventory.ini       # Target machine configuration
+    └── playbook.yml        # Deployment instructions
 ```
 
 ---
 
-## 🚀 Getting Started
+## Pipeline Architecture
+
+```
+Developer (git push)
+        │
+        ▼
+  GitHub Repository
+        │  webhook
+        ▼
+   ngrok Tunnel
+        │
+        ▼
+  Jenkins (localhost:8080)
+        │
+        ├── 1. Checkout Code
+        ├── 2. Run PyUnit Tests (19 tests)
+        ├── 3. Build Docker Image
+        ├── 4. Push to Docker Hub
+        ├── 5. Deploy via Ansible
+        │       └── Pull image → Stop old container → Run new container
+        └── 6. Send Email Notification (Success / Failure)
+```
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- Python 3.12+
+
+- Python 3.12
 - Docker Desktop
-- Git
+- Java (for Jenkins)
+- Ansible (via WSL/Ubuntu)
+- ngrok
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/VINNIESINGHSISODIA/scientific-calculator.git
+cd scientific-calculator
+```
 
 ### Run the Calculator Locally
 
 ```bash
-# Clone the repository
-git clone https://github.com/VINNIESINGHSISODIA/scientific-calculator.git
-
-# Navigate to project folder
-cd scientific-calculator
-
-# Run the calculator
 python3 calculator.py
 ```
 
-You will see:
-```
-=============================
-    Scientific Calculator    
-=============================
-1. Square Root  √x
-2. Factorial    x!
-3. Natural Log  ln(x)
-4. Power        x^b
-5. Exit
-=============================
-Enter your choice (1-5):
-```
-
 ---
 
-## 🧪 Running Tests
+## Running Tests
+
+19 unit tests are written using Python's built-in `unittest` framework, covering normal inputs, edge cases, and invalid inputs.
 
 ```bash
-# Run all 19 unit tests with verbose output
 python3 -m unittest test_calculator.py -v
 ```
 
-Expected output:
-```
-test_factorial_normal ... ok
-test_factorial_zero ... ok
-test_natural_log_of_e ... ok
-test_square_root_positive ... ok
-...
-----------------------------------------------------------------------
-Ran 19 tests in 0.004s
-OK
-```
+**Test Coverage:**
 
-### Test Coverage
-
-| Function | Normal | Edge Case | Invalid Input |
-|----------|--------|-----------|---------------|
-| square_root | ✅ | ✅ | ✅ |
-| factorial | ✅ | ✅ | ✅ |
-| natural_log | ✅ | ✅ | ✅ |
-| power | ✅ | ✅ | ✅ |
+| Function | Normal Tests | Edge Cases | Invalid Input |
+|---|---|---|---|
+| `square_root` | sqrt(9)=3.0 | sqrt(0)=0.0 | sqrt(-1) → ValueError |
+| `factorial` | factorial(5)=120 | factorial(0)=1 | factorial(-3) → ValueError |
+| `natural_log` | ln(10)≈2.302 | ln(1)=0.0 | ln(0) → ValueError |
+| `power` | 2^3=8.0 | 5^0=1.0 | 2^(-1)=0.5 (valid) |
 
 ---
 
-## 🐳 Docker
+## Docker Usage
 
-### Build Image Locally
+### Build the Image
 
 ```bash
-# Build the Docker image
 docker build -t scientific-calculator .
+```
 
-# Run the container interactively
+> Unit tests run automatically during the build. If any test fails, the image is not created.
+
+### Run the Container
+
+```bash
 docker run -it scientific-calculator
+```
 
-# Pull from Docker Hub
+### Pull from Docker Hub
+
+```bash
 docker pull vinnie9999/scientific-calculator:latest
-
-# Run from Docker Hub image
-docker run -it vinnie9999/scientific-calculator:latest
 ```
-
-### Docker Image Details
-
-| Detail | Value |
-|--------|-------|
-| Base Image | python:3.12-slim |
-| Image Size | ~180MB |
-| Docker Hub | vinnie9999/scientific-calculator |
-| Tag | latest |
 
 ---
 
-## 🔧 Jenkins Pipeline
+## CI/CD Pipeline
 
-Jenkins automates the entire pipeline on every GitHub push.
+The pipeline is defined in `Jenkinsfile` and contains the following stages:
 
-### Pipeline Stages
+| Stage | Description |
+|---|---|
+| **Checkout** | Pulls latest code from GitHub |
+| **Test** | Runs all 19 PyUnit tests |
+| **Build Docker Image** | Builds the container image |
+| **Push to Docker Hub** | Pushes image to registry |
+| **Deploy with Ansible** | Pulls image and runs container |
+| **Email Notification** | Sends success/failure email |
 
-```
-Declarative: Checkout SCM  →  1s   ✅
-Checkout                   →  1s   ✅
-Test (19 PyUnit tests)     →  700ms ✅
-Build Docker Image         →  6s   ✅
-Push to Docker Hub         →  19s  ✅
-Deploy with Ansible        →  15s  ✅
-Post Actions (Email)       →  1s   ✅
-─────────────────────────────────────
-Total pipeline time:       ~35 seconds
-```
-
-### Jenkins Setup
+### Jenkins Setup (Local)
 
 ```bash
-# Run Jenkins using WAR file
 java -jar jenkins.war
-
-# Access Jenkins at
-http://localhost:8080
-
-# Expose Jenkins to internet for GitHub webhooks
-ngrok http 8080
+# Access at http://localhost:8080
 ```
 
-### Plugins Required
-- GitHub Integration Plugin
-- Email Extension Plugin
-
----
-
-## 📦 Ansible Deployment
-
-Ansible automatically pulls the latest Docker image and runs the container after every successful Jenkins build.
+### Expose Jenkins via ngrok
 
 ```bash
-# Install Ansible (WSL/Ubuntu)
-sudo apt-get install -y ansible
+ngrok http 8080
+# Use the generated public URL as the GitHub webhook payload URL
+```
 
-# Run playbook manually
+### Run Ansible Deployment Manually
+
+```bash
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
 ```
 
-### Playbook Tasks
+---
 
-```
-TASK [Pull latest Docker image]     → changed
-TASK [Stop existing container]      → changed/ignored
-TASK [Remove existing container]    → changed/ignored
-TASK [Run new container]            → changed
-─────────────────────────────────────────────────
-PLAY RECAP: ok=9, failed=0
-```
+## Links
+
+- **GitHub Repository:** https://github.com/VINNIESINGHSISODIA/scientific-calculator
+- **Docker Hub Image:** https://hub.docker.com/r/vinnie9999/scientific-calculator
 
 ---
 
-## 📊 Logging
+## Author
 
-Every calculator operation is automatically logged to `calculator.log`:
-
-```
-2024-02-28 14:30:00 - INFO - Calculator application started
-2024-02-28 14:30:05 - INFO - square_root(25) = 5.0
-2024-02-28 14:30:10 - INFO - factorial(5) = 120
-2024-02-28 14:30:15 - INFO - natural_log(10) = 2.302585
-2024-02-28 14:30:20 - INFO - power(2, 8) = 256.0
-```
-
----
-
-## 🔗 Links
-
-| Resource | URL |
-|----------|-----|
-| GitHub Repository | https://github.com/VINNIESINGHSISODIA/scientific-calculator |
-| Docker Hub Image | https://hub.docker.com/r/vinnie9999/scientific-calculator |
-
----
-
-## 👤 Author
-
-**Vinnie Singh Sisodia**  
-CS 816 - Software Production Engineering
-
----
-
-## 📄 License
-
-This project is for educational purposes as part of CS 816 Mini Project.
+**Vini Singh Rajput** — MT2025131   
+International Institute of Information Technology, Bangalore  
