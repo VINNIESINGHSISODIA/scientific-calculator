@@ -4,7 +4,6 @@
 ![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker)
 ![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-D24939?logo=jenkins)
 ![Ansible](https://img.shields.io/badge/Ansible-Deployment-EE0000?logo=ansible)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 A command-line Scientific Calculator application built with Python, deployed through a fully automated DevOps CI/CD pipeline using **GitHub → Jenkins → Docker → Docker Hub → Ansible**.
 
