@@ -16,7 +16,7 @@ def square_root(x):
     if x < 0:
         raise ValueError(f"Cannot compute square root of a negative number: {x}")
     result = math.sqrt(x)
-    logging.info(f"square_root({x}) = {result}"
+    logging.info(f"square_root({x}) = {result}")
     return result
 
 def factorial(x):
